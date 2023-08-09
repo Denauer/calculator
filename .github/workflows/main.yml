@@ -1,0 +1,31 @@
+name: Manual Step Example
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Step 1
+        run: echo "This is Step 1"
+
+      - name: Step 2 (Manual)
+        run: echo "This is Step 2, which is manual"
+        if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'skipped'
+
+  manual_approval:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Manual Approval
+        id: manual_approval
+        run: echo "This step requires manual approval"
+
+  final_step:
+    needs: manual_approval
+    runs-on: ubuntu-latest
+    steps:
+      - name: Final Step
+        run: echo "This is the final step"
